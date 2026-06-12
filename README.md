@@ -128,11 +128,6 @@ pytest -m negativo
 pytest tests/test_usuarios.py::test_cadastrar_usuario_valido_retorna_201 -v
 ```
 
-### Gerar relatório HTML manualmente
-```bash
-pytest --html=reports/report.html --self-contained-html
-```
-
 ### Problemas comuns
 
 - Se ao rodar `pytest` você vir erro como `ModuleNotFoundError: No module named 'services'`, execute o pytest através do launcher do Python para garantir que o diretório do projeto esteja no `sys.path`:
