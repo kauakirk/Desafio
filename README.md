@@ -62,7 +62,6 @@ serverest-pytest/
 
 ```bash
 git clone https://github.com/kauakirk/serverest-pytest.git
-cd serverest-pytest
 ```
 
 ### 2. Crie o ambiente virtual
