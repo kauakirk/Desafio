@@ -28,7 +28,6 @@ Endpoint coberto:
 - [Pytest](https://docs.pytest.org/)
 - [Requests](https://requests.readthedocs.io/)
 - [Faker](https://faker.readthedocs.io/) — geração de dados dinâmicos em português
-- [Pytest-HTML](https://pytest-html.readthedocs.io/) — relatório visual dos testes
 - [Python-dotenv](https://pypi.org/project/python-dotenv/) — variáveis de ambiente
 
 ---
@@ -48,7 +47,6 @@ serverest-pytest/
 ├── utils/
 │   └── data_factory.py         # Geração de dados com Faker
 │
-├── reports/                    # Relatório HTML gerado pelo pytest
 ├── .env.example                # Exemplo de variáveis de ambiente
 ├── .gitignore
 ├── pytest.ini
