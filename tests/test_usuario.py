@@ -1,5 +1,5 @@
 from services.usuarios_service import UsuariosService
-from utils.payloads import new_user_payload
+from utils.payloads import new_user_payload, invalid_user_payload, login_payload
 from services.api_client import get
 
 
@@ -29,11 +29,7 @@ def test_can_create_user():
 
 
 def test_cannot_create_user_without_email():
-    payload = {
-        "nome": "Fulano",
-        "password": "123",
-        "administrador": "false",
-    }
+    payload = invalid_user_payload()
 
     response = UsuariosService.create(payload)
     body = response.json()
@@ -48,7 +44,7 @@ def test_can_create_user_and_login():
     create_response = UsuariosService.create(user_payload)
     assert create_response.status_code == 201
 
-    login_response = UsuariosService.login({"email": user_payload["email"], "password": user_payload["password"]})
+    login_response = UsuariosService.login(login_payload(user_payload["email"], user_payload["password"]))
     body = login_response.json()
 
     assert login_response.status_code == 200

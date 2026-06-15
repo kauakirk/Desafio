@@ -1,6 +1,6 @@
 from services.usuarios_service import UsuariosService
 from services.produtos_service import ProdutosService
-from utils.payloads import new_user_payload, new_product_payload
+from utils.payloads import new_user_payload, new_product_payload, login_payload, update_product_payload
 from utils.auth import admin_token
 
 
@@ -37,7 +37,7 @@ def test_create_product_as_non_admin_returns_forbidden():
     create_response = UsuariosService.create(user_payload)
     assert create_response.status_code == 201
 
-    login_response = UsuariosService.login({"email": user_payload["email"], "password": user_payload["password"]})
+    login_response = UsuariosService.login(login_payload(user_payload["email"], user_payload["password"]))
     assert login_response.status_code == 200
     token = login_response.json()["authorization"]
 
@@ -69,12 +69,7 @@ def test_update_product_as_admin():
     assert creation_response.status_code == 201
     product_id = creation_response.json()["_id"]
 
-    updated_payload = {
-        "nome": payload["nome"] + " Atualizado",
-        "preco": payload["preco"],
-        "descricao": payload["descricao"],
-        "quantidade": payload["quantidade"],
-    }
+    updated_payload = update_product_payload(payload)
 
     response = ProdutosService.update(product_id, updated_payload, token)
     body = response.json()
