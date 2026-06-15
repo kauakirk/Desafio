@@ -90,42 +90,5 @@ def test_delete_product_as_admin():
 
     assert response.status_code == 200
     assert "Registro excluído" in body["message"]
-
-    assert response.status_code == 200
     assert body["_id"] == product_id
     assert body["nome"] == payload["nome"]
-
-
-def test_update_product_as_admin():
-    token = create_admin_token()
-    payload = new_product_payload()
-    creation_response = create_product(token, payload)
-    assert creation_response.status_code == 201
-    product_id = creation_response.json()["_id"]
-
-    updated_payload = {
-        "nome": payload["nome"] + " Atualizado",
-        "preco": payload["preco"],
-        "descricao": payload["descricao"],
-        "quantidade": payload["quantidade"],
-    }
-
-    response = requests.put(BASE_URL + f"/produtos/{product_id}", json=updated_payload, headers={"Authorization": token})
-    body = response.json()
-
-    assert response.status_code == 200
-    assert body["message"] == "Registro alterado com sucesso"
-
-
-def test_delete_product_as_admin():
-    token = create_admin_token()
-    payload = new_product_payload()
-    creation_response = create_product(token, payload)
-    assert creation_response.status_code == 201
-    product_id = creation_response.json()["_id"]
-
-    response = requests.delete(BASE_URL + f"/produtos/{product_id}", headers={"Authorization": token})
-    body = response.json()
-
-    assert response.status_code == 200
-    assert "Registro excluído" in body["message"]
