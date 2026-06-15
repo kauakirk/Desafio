@@ -106,5 +106,6 @@ def test_cancel_purchase_deletes_cart_and_restock():
     assert response.status_code == 200
     assert body["message"] in [
         "Registro excluído com sucesso",
+        "Registro excluído com sucesso. Estoque dos produtos reabastecido",
         "Registro excluído com sucesso | Não foi encontrado carrinho para esse usuário",
     ]

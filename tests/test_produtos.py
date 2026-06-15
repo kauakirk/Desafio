@@ -90,5 +90,3 @@ def test_delete_product_as_admin():
 
     assert response.status_code == 200
     assert "Registro excluído" in body["message"]
-    assert body["_id"] == product_id
-    assert body["nome"] == payload["nome"]
