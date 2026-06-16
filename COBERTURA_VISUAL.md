@@ -80,7 +80,7 @@ Operation Flow:      [████████████████░░░�
 TOTAL MÓDULO:        [████████████████░░░░] 76%
 ```
 
-### 🛒 test_carrinhos.py - 6 Testes
+### 🛒 test_carrinhos.py - 5 Testes
 ```
 Path Coverage:       [████████████████████] 100% (5/5)
 Operator Coverage:   [████████████████████] 100% (4/4)
@@ -117,7 +117,7 @@ TOTAL MÓDULO:        [██████████░░░░░░░░░
 ### Endpoints
 - [x] GET /usuarios - Listar
 - [x] POST /usuarios - Criar
-- [x] GET /usuarios?_id - Buscar por ID
+- [x] GET /usuarios/{id} - Buscar por ID
 - [x] PUT /usuarios/{id} - Atualizar
 - [x] DELETE /usuarios/{id} - Deletar
 - [x] POST /login - Autenticar
@@ -194,7 +194,7 @@ TOTAL MÓDULO:        [██████████░░░░░░░░░
 
 ---
 
-**Último atualizado**: 2026-06-15  
+**Último atualizado**: 2026-06-16  
 **Total de testes**: 28  
 **Taxa de aprovação**: 100%  
 **Tempo médio de execução**: ~25 segundos

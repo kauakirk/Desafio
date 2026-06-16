@@ -1,6 +1,6 @@
 # 📊 Relatório Detalhado de Cobertura de Testes
 
-**Gerado em**: 2026-06-15  
+**Gerado em**: 2026-06-16  
 **Suíte**: Testes API ServeRest com Pytest  
 **Total de Testes**: 28  
 **Taxa de Aprovação**: 100% (28/28)  
@@ -32,7 +32,7 @@
 |----------|--------|--------|-------|
 | /usuarios | GET | ✅ | `test_can_get_users` |
 | /usuarios | POST | ✅ | `test_can_create_user` |
-| /usuarios (busca by ID) | GET | ✅ | `test_can_get_user_by_id` |
+| /usuarios/{id} (busca by ID) | GET | ✅ | `test_can_get_user_by_id` |
 | /usuarios/{id} | PUT | ✅ | `test_can_create_user_and_edit` |
 | /usuarios/{id} | DELETE | ✅ | `test_can_create_and_delete_user` |
 
@@ -105,7 +105,7 @@
 - `_id` (usuários, produtos, carrinhos) ✅
 
 #### ✅ Query Parameters
-- `_id` (filtro em GET /usuarios) ✅
+- `_id` (filtro em GET /usuarios/{id}) ✅
 
 #### ✅ Header Parameters
 - `Authorization: <token>` (em operações admin e carrinhos) ✅

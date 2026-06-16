@@ -83,7 +83,7 @@ Todos os 16 endpoints planejados foram implementados com testes:
 ✅ **Usuários (5 endpoints)**
 - `GET /usuarios` - Listar usuários
 - `POST /usuarios` - Criar usuário
-- `GET /usuarios?_id={id}` - Buscar por ID
+- `GET /usuarios/{id}` - Buscar por ID
 - `PUT /usuarios/{id}` - Atualizar usuário
 - `DELETE /usuarios/{id}` - Deletar usuário
 
@@ -119,7 +119,6 @@ Todos os 16 operações estão cobertas:
 - ✅ Body: `nome`, `email`, `password`, `administrador` (usuários)
 - ✅ Body: `nome`, `preco`, `descricao`, `quantidade` (produtos)
 - ✅ Path: `_id` (em usuários, produtos, carrinhos)
-- ✅ Query: `_id` (para busca de usuários)
 - ✅ Header: `Authorization` (token)
 
 **Parâmetros não cobertos (4 de 12):**
@@ -239,10 +238,11 @@ A suíte de testes alcançou uma **cobertura média de ~80.6%** através de:
 
 ```
 tests/
+├── conftest.py           # Fixtures de sessão (tokens admin/user)
 ├── test_usuario.py       # 12 testes para usuários
 ├── test_login.py         # 4 testes para autenticação
-├── test_produtos.py      # 6 testes para produtos
-└── test_carrinhos.py     # 6 testes para carrinhos
+├── test_produtos.py      # 7 testes para produtos
+└── test_carrinhos.py     # 5 testes para carrinhos
 
 services/
 ├── usuarios_service.py   # Requisições para /usuarios
@@ -252,9 +252,13 @@ services/
 
 utils/
 ├── payloads.py           # Builders de dados de teste
-└── auth.py               # Funções de autenticação
+├── schemas.py            # Definições JSON Schema (entrada e resposta)
+├── validator.py          # Funções de validação JSON Schema
+└── auth.py               # Funções de autenticação com cache de token
 
 PLANO-DE-TESTES.md        # Documentação do escopo
+COVERAGE_REPORT.md        # Relatório detalhado de cobertura
+COBERTURA_VISUAL.md       # Resumo visual de cobertura
 pytest.ini                # Configuração do pytest
 ```
 
