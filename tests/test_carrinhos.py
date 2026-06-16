@@ -2,7 +2,8 @@ from services.usuarios_service import UsuariosService
 from services.produtos_service import ProdutosService
 from services.carrinhos_service import CarrinhosService
 from utils.payloads import new_user_payload, new_product_payload, login_payload
-from utils.auth import admin_token, user_token
+from utils.validator import validate_cart_create, validate_cart_response
+from utils.auth import admin_token
 
 
 def test_list_carts():
@@ -29,10 +30,14 @@ def test_create_cart_with_valid_token():
     assert login_response.status_code == 200
     user_tok = login_response.json()["authorization"]
 
+    cart_payload = {"produtos": [{"idProduto": product_id, "quantidade": 1}]}
+    validate_cart_create(cart_payload)
+
     cart_response = CarrinhosService.create(user_tok, product_id)
     body = cart_response.json()
 
     assert cart_response.status_code == 201
+    validate_cart_response(body)
     assert body["message"] == "Cadastro realizado com sucesso"
     assert "_id" in body
 
