@@ -82,6 +82,8 @@ O objetivo desta suíte de testes é validar o comportamento da API de usuários
 
 - ✅ Deve retornar o usuário correto ao buscar por ID
 - ✅ Deve retornar o campo `_id` correspondente ao ID buscado
+- ✅ Deve retornar os campos `nome`, `email` e `administrador` do usuário
+- ✅ Deve retornar `400` quando o usuário não existir
 
 ### Endpoint `PUT /usuarios/{id}`
 
@@ -104,12 +106,12 @@ O objetivo desta suíte de testes é validar o comportamento da API de usuários
 - ✅ Deve cadastrar produto com token de administrador e retornar `201`
 - ✅ Deve falhar com `401` quando o token de admin estiver ausente
 - ✅ Deve falhar com `403` quando o token não pertencer a administrador
-- ⬜ Deve falhar com `400` quando nome de produto duplicado
+- ✅ Deve falhar com `400` quando nome de produto duplicado
 
 ### Endpoint `GET /produtos/{id}`
 
 - ✅ Deve retornar o produto correto ao buscar por ID
-- ⬜ Deve retornar `400` quando o produto não existir
+- ✅ Deve retornar `400` quando o produto não existir
 
 ### Endpoint `PUT /produtos/{id}`
 
@@ -139,7 +141,7 @@ O objetivo desta suíte de testes é validar o comportamento da API de usuários
 ### Endpoint `GET /carrinhos/{id}`
 
 - ✅ Deve retornar o carrinho correto ao buscar por ID
-- ⬜ Deve retornar `400` quando o carrinho não existir
+- ✅ Deve retornar `400` quando o carrinho não existir
 
 ### Endpoint `DELETE /carrinhos/concluir-compra`
 
