@@ -61,6 +61,7 @@ A cobertura de testes foi calculada utilizando os critérios definidos no artigo
 - **Parameter Coverage (Input)**: Parâmetros de entrada cobertos / Total de parâmetros
 - **Status Code Coverage (Output)**: Status codes cobertos / Total de status codes possíveis
 - **Operation Flow (Input)**: Fluxos de operação cobertos / Total de fluxos possíveis
+- **JSON Schema Validation**: validação de payloads e respostas com jsonschema
 
 ### Resultados de Cobertura
 
