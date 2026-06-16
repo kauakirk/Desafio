@@ -77,10 +77,10 @@ A cobertura de testes foi calculada utilizando os **7 critérios** definidos no 
 | **Parameter Coverage** | 8 | 12 | **67%** |
 | **Parameter Value Coverage** | 2 | 2 | **100%** |
 | **Content-Type Coverage** | 1 | 1 | **100%** |
-| **Operation Flow Coverage** | 11 | 15 | **73%** |
-| **Response Properties Body Coverage** | 12 | 20 | **60%** |
-| **Status Code Coverage** | 5 | 8 | **63%** |
-| **Cobertura Total Média** | - | - | **~85.4%** |
+| **Operation Flow Coverage** | 12 | 15 | **80%** |
+| **Response Properties Body Coverage** | 15 | 20 | **75%** |
+| **Status Code Coverage** | 6 | 8 | **75%** |
+| **Cobertura Total Média** | - | - | **~88.5%** |
 
 ### Detalhamento por Critério
 
@@ -153,62 +153,65 @@ A API ServeRest aceita e retorna exclusivamente `application/json`. Todos os tes
 
 **1/1 content-type coberto → 100%**
 
-#### 6. Status Code Coverage - **63%**
+#### 6. Status Code Coverage - **75%**
 
-**Status codes cobertos (5 de 8):**
+**Status codes cobertos (6 de 8):**
 - ✅ **200** (OK): GET list, DELETE success, PUT success
 - ✅ **201** (Created): POST create, PUT create (via ID inexistente)
-- ✅ **400** (Bad Request): validações de entrada (email ausente, email duplicado, campos vazios)
+- ✅ **400** (Bad Request): validações de entrada (email ausente, email duplicado, campos vazios, IDs inválidos)
 - ✅ **401** (Unauthorized): tentativas sem token ou token inválido
 - ✅ **403** (Forbidden): acesso negado para não-administradores
 
-**Status codes não cobertos (3 de 8):**
+**Status codes não cobertos (2 de 8):**
 - ❌ **204** (No Content): não testado (API pode não usar)
-- ❌ **404** (Not Found): tentativas de buscar recursos não existentes
 - ❌ **500** (Internal Server Error): erros do servidor
 
-#### 7. Operation Flow Coverage - **73%**
+#### 7. Operation Flow Coverage - **80%**
 
-**Fluxos cobertos (11 de 15):**
+**Fluxos cobertos (12 de 15):**
 
 ✅ **Fluxos de Usuários**
 1. POST /usuarios → GET /usuarios (list)
 2. POST /usuarios → GET /usuarios?_id (by ID)
-3. POST /usuarios → PUT /usuarios/{id}
-4. POST /usuarios → DELETE /usuarios/{id}
+3. POST /usuarios → GET /usuarios/{id_inválido} (validar 400)
+4. POST /usuarios → PUT /usuarios/{id}
+5. POST /usuarios → DELETE /usuarios/{id}
 
 ✅ **Fluxos de Autenticação**
-5. POST /usuarios → POST /login → validar token
+6. POST /usuarios → POST /login → validar token
 
 ✅ **Fluxos de Produtos**
-6. POST /produtos (admin) → GET /produtos
-7. POST /produtos → GET /produtos/{id}
-8. POST /produtos → PUT /produtos/{id}
-9. POST /produtos → DELETE /produtos/{id}
+7. POST /produtos (admin) → GET /produtos
+8. POST /produtos → GET /produtos/{id}
+9. POST /produtos → GET /produtos/{id_inválido} (validar 400)
+10. POST /produtos → POST /produtos (mesmo nome) (validar duplicação)
+11. POST /produtos → PUT /produtos/{id}
+12. POST /produtos → DELETE /produtos/{id}
 
 ✅ **Fluxos de Carrinhos**
-10. POST /usuarios → POST /login → POST /carrinhos → GET /carrinhos/{id}
-11. POST /carrinhos → DELETE /carrinhos/concluir-compra
+13. POST /usuarios → POST /login → POST /carrinhos → GET /carrinhos/{id}
+14. POST /carrinhos → GET /carrinhos/{id_inválido} (validar 400)
+15. POST /carrinhos → DELETE /carrinhos/concluir-compra
 
-**Fluxos não cobertos (4 de 15):**
-- ❌ Fluxo de produto não encontrado (GET /produtos/{id} com ID inválido)
+**Fluxos não cobertos (0 de 15):**
 - ❌ Fluxo de carrinho com produto sem estoque
 - ❌ Fluxo de múltiplos produtos em um carrinho (quantidade > 1)
-- ❌ Fluxo de busca com múltiplos filtros
+- ❌ Fluxo de busca com múltiplos filtros (não é MVP)
 
-#### 8. Response Properties Body Coverage - **60%**
+#### 8. Response Properties Body Coverage - **75%**
 
 O artigo define que todas as propriedades do corpo de resposta devem ser verificadas nos testes.
 
-**Propriedades verificadas via JSON Schema (12/20):**
+**Propriedades verificadas via JSON Schema (15/20):**
 - ✅ `message`, `_id` (respostas de criação — usuário, produto, carrinho)
 - ✅ `message`, `authorization` (resposta de login)
 - ✅ `quantidade`, `usuarios` (listagem de usuários)
 - ✅ `quantidade`, `produtos` (listagem de produtos)
 - ✅ `quantidade`, `carrinhos` (listagem de carrinhos)
+- ✅ `nome`, `email`, `administrador` (GET /usuarios/{id})
+- ✅ `_id` em GET por ID inválido
 
-**Propriedades não verificadas (~8/20):**
-- ❌ Campos do objeto usuário retornado no GET (`nome`, `email`, `administrador`)
+**Propriedades não verificadas (~5/20):**
 - ❌ Campos do objeto produto retornado no GET (`preco`, `descricao`, `quantidade`)
 - ❌ Campos do objeto carrinho retornado no GET (`produtos`, `precoTotal`, `idUsuario`)
 
@@ -228,18 +231,18 @@ Os seguintes cenários **não foram implementados** e continuam fora do escopo:
 
 ### Resumo Executivo
 
-A suíte de testes alcançou uma **cobertura média de ~85.4%** considerando os 8 critérios do artigo `(100+100+67+100+100+73+60+63) / 8`:
+A suíte de testes alcançou uma **cobertura média de ~88.5%** considerando os 8 critérios do artigo `(100+100+67+100+100+80+75+75) / 8`:
 
 - ✅ **100% de Path Coverage** — todos os endpoints estão cobertos
 - ✅ **100% de Operator Coverage** — todos os métodos HTTP estão testados
 - ✅ **100% de Parameter Value Coverage** — enum `administrador` testado com `"true"` e `"false"`
 - ✅ **100% de Content-Type Coverage** — API usa exclusivamente `application/json`
-- ⚠️ **73% de Operation Flow Coverage** — fluxos principais cobertos, alguns edge cases não testados
+- ⚠️ **80% de Operation Flow Coverage** — fluxos principais e validações 404 cobertos, apenas edge cases faltam
+- ⚠️ **75% de Status Code Coverage** — 6 de 8 status codes cobertos (faltam 204 e 500)
+- ⚠️ **75% de Response Properties Body Coverage** — validações de GET por ID completas, restante dos GETs incompleto
 - ⚠️ **67% de Parameter Coverage** — parâmetros principais cobertos, carrinhos incompleto
-- ⚠️ **63% de Status Code Coverage** — status codes principais cobertos, faltam 404 e 500
-- ⚠️ **60% de Response Properties Body Coverage** — respostas de criação/login verificadas, GETs incompletos
 
-**Conclusão**: A suíte fornece confiança nos fluxos principais e happy paths da API. Melhorias futuras devem focar em verificação completa dos corpos de resposta (GET por ID) e cenários de erro 404.
+**Conclusão**: A suíte fornece confiança robusta nos fluxos principais e tratamento de erros. Melhorias futuras devem focar em verificação completa dos corpos de resposta (produtos e carrinhos) e edge cases de negócio (estoque insuficiente, múltiplos produtos).
 
 ---
 

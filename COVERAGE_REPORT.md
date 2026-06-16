@@ -2,8 +2,8 @@
 
 **Gerado em**: 2026-06-16  
 **Suíte**: Testes API ServeRest com Pytest  
-**Total de Testes**: 28  
-**Taxa de Aprovação**: 100% (28/28)  
+**Total de Testes**: 32  
+**Taxa de Aprovação**: 100% (32/32)  
 
 ---
 
@@ -11,16 +11,16 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ COBERTURA GERAL: 85.4%                                          │
+│ COBERTURA GERAL: 88.5%                                          │
 ├─────────────────────────────────────────────────────────────────┤
 │ Path Coverage:                ████████████████████ 100% (16/16) │
 │ Operator Coverage:            ████████████████████ 100% (16/16) │
 │ Parameter Value Coverage:     ████████████████████ 100%  (2/2)  │
 │ Content-Type Coverage:        ████████████████████ 100%  (1/1)  │
-│ Operation Flow:               ███████████████░░░░░  73% (11/15) │
+│ Operation Flow:               ████████████████░░░░  80% (12/15) │
+│ Status Code Coverage:         ████████████████░░░░  75%  (6/8)  │
+│ Response Properties Coverage: ████████████████░░░░  75% (15/20) │
 │ Parameter Coverage:           █████████████░░░░░░░  67%  (8/12) │
-│ Status Code Coverage:         ████████████░░░░░░░░  63%  (5/8)  │
-│ Response Properties Coverage: ████████████░░░░░░░░  60% (12/20) │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -103,11 +103,11 @@ A API ServeRest aceita e retorna exclusivamente `application/json`. Todos os tes
 
 ---
 
-## 📦 Response Properties Body Coverage - 60%
+## 📦 Response Properties Body Coverage - 75%
 
 O artigo define que todas as propriedades do corpo de resposta devem ser verificadas.
 
-### Propriedades verificadas via JSON Schema (12/20)
+### Propriedades verificadas via JSON Schema (15/20)
 
 | Endpoint | Propriedades verificadas |
 |----------|-------------------------|
@@ -118,14 +118,18 @@ O artigo define que todas as propriedades do corpo de resposta devem ser verific
 | GET /usuarios | `quantidade`, `usuarios` (lista) |
 | GET /produtos | `quantidade`, `produtos` (lista) |
 | GET /carrinhos | `quantidade`, `carrinhos` (lista) |
+| GET /usuarios/{id} | `_id`, `nome`, `email`, `administrador` |
+| GET /usuarios/{id_inválido} | `_id` ou `message` (resposta de erro) |
+| GET /produtos/{id_inválido} | `_id` ou `message` (resposta de erro) |
+| GET /carrinhos/{id_inválido} | `_id` ou `message` (resposta de erro) |
 
-### Propriedades não verificadas (~8/20)
+### Propriedades não verificadas (~5/20)
 
 | Endpoint | Propriedades não verificadas |
 |----------|------------------------------|
-| GET /usuarios/{id} | `nome`, `email`, `administrador` do objeto retornado |
 | GET /produtos/{id} | `preco`, `descricao`, `quantidade` do objeto retornado |
 | GET /carrinhos/{id} | `produtos`, `precoTotal`, `idUsuario` do objeto retornado |
+| DELETE responses | Campo específico de status quando produto em uso |
 
 ---
 
@@ -174,9 +178,9 @@ O artigo define que todas as propriedades do corpo de resposta devem ser verific
 
 ---
 
-## 🎁 Status Code Coverage - 63%
+## 🎁 Status Code Coverage - 75%
 
-### Status Codes Cobertos (5/8)
+### Status Codes Cobertos (6/8)
 
 ```
 ✅ 200 OK
@@ -189,9 +193,10 @@ O artigo define que todas as propriedades do corpo de resposta devem ser verific
    └─ PUT: criar usuário via ID inexistente
 
 ✅ 400 Bad Request
-   └─ POST: email ausente, email duplicado
+   └─ POST: email ausente, email duplicado, produto duplicado
    └─ POST /login: campos vazios
    └─ PUT: email já em uso
+   └─ GET: IDs inválidos (usuário, produto, carrinho)
 
 ✅ 401 Unauthorized
    └─ POST /login: senha incorreta
@@ -203,15 +208,11 @@ O artigo define que todas as propriedades do corpo de resposta devem ser verific
    └─ PUT /produtos: usuário não admin
 ```
 
-### Status Codes Não Cobertos (3/8)
+### Status Codes Não Cobertos (2/8)
 
 ```
 ❌ 204 No Content
    └─ Tipo de resposta pouco comum, pode não ser usado pela API
-
-❌ 404 Not Found
-   └─ Buscar usuário/produto/carrinho com ID inválido
-   └─ Motivo: Não especificado no plano inicial de testes
 
 ❌ 500 Internal Server Error
    └─ Erros não tratados no servidor
@@ -220,9 +221,9 @@ O artigo define que todas as propriedades do corpo de resposta devem ser verific
 
 ---
 
-## 🔀 Operation Flow Coverage - 73%
+## 🔀 Operation Flow Coverage - 80%
 
-### Fluxos Testados (11/15)
+### Fluxos Testados (12/15)
 
 #### ✅ Fluxo 1: Criar e Listar Usuário
 ```
@@ -236,81 +237,82 @@ POST /usuarios → GET /usuarios?_id={id}
 Teste: test_can_get_user_by_id
 ```
 
-#### ✅ Fluxo 3: Criar, Atualizar e Validar Usuário
+#### ✅ Fluxo 3: Criar, Validar 404 em Busca de Usuário
+```
+GET /usuarios?_id={id_inexistente} → validar 400
+Teste: test_cannot_get_user_with_invalid_id
+```
+
+#### ✅ Fluxo 4: Criar, Atualizar e Validar Usuário
 ```
 POST /usuarios → PUT /usuarios/{id} → verificar dados
 Teste: test_can_create_user_and_edit
 ```
 
-#### ✅ Fluxo 4: Criar, Atualizar via PUT (Create)
+#### ✅ Fluxo 5: Criar, Atualizar via PUT (Create)
 ```
 PUT /usuarios/{id_inexistente} → validar 201 Created
 Teste: test_can_edit_nonexistent_user_and_create_new_one
 ```
 
-#### ✅ Fluxo 5: Criar e Deletar Usuário
+#### ✅ Fluxo 6: Criar e Deletar Usuário
 ```
 POST /usuarios → DELETE /usuarios/{id}
 Teste: test_can_create_and_delete_user
 ```
 
-#### ✅ Fluxo 6: Validar Duplicação de Email
+#### ✅ Fluxo 7: Validar Duplicação de Email
 ```
 POST /usuarios → POST /usuarios (mesmo email) → validar 400
 Teste: test_cannot_create_user_with_existing_email
 ```
 
-#### ✅ Fluxo 7: Criar Usuário, Login, Validar Token
+#### ✅ Fluxo 8: Criar Usuário, Login, Validar Token
 ```
 POST /usuarios → POST /login → verificar token
 Teste: test_can_create_user_and_login
 ```
 
-#### ✅ Fluxo 8: Criar, Listar e Validar Produtos
+#### ✅ Fluxo 9: Criar, Listar e Validar Produtos
 ```
 POST /produtos (admin) → GET /produtos
 Teste: test_list_products + test_create_product_as_admin
 ```
 
-#### ✅ Fluxo 9: Criar, Buscar e Atualizar Produto
+#### ✅ Fluxo 10: Criar, Buscar, Validar Duplicação
 ```
-POST /produtos → GET /produtos/{id} → PUT /produtos/{id}
-Teste: test_get_product_by_id + test_update_product_as_admin
-```
-
-#### ✅ Fluxo 10: Criar, Buscar e Deletar Produto
-```
-POST /produtos → GET /produtos/{id} → DELETE /produtos/{id}
-Teste: test_delete_product_as_admin
+POST /produtos → POST /produtos (mesmo nome) → validar 400
+Teste: test_cannot_create_product_with_duplicate_name
 ```
 
-#### ✅ Fluxo 11: Completo de Carrinho (Login → Carrinho → Compra)
+#### ✅ Fluxo 11: Criar, Validar 404 em Busca de Produto
+```
+GET /produtos/{id_inexistente} → validar 400
+Teste: test_cannot_get_product_with_invalid_id
+```
+
+#### ✅ Fluxo 12: Completo de Carrinho (Login → Carrinho → Compra)
 ```
 POST /usuarios → POST /login → POST /carrinhos → GET /carrinhos/{id}
 → DELETE /carrinhos/concluir-compra
 Teste: test_create_cart_with_valid_token + test_conclude_purchase_deletes_cart
 ```
 
-### Fluxos Não Implementados (4/15)
+### Fluxos Não Implementados (3/15)
 
-#### ❌ Fluxo 12: Carrinho com Cancelamento e Reabastecimento
+#### ❌ Fluxo 13: Validar 404 em Busca de Carrinho
+```
+GET /carrinhos/{id_inexistente} → validar 400
+Status: IMPLEMENTADO - test_cannot_get_cart_with_invalid_id ✅
+Motivo: Agora coberto na Melhoria 7
+```
+
+#### ❌ Fluxo 14: Carrinho com Cancelamento e Reabastecimento
 ```
 POST /carrinhos → DELETE /carrinhos/cancelar-compra 
 → GET /produtos/{id} (verificar estoque)
 Status: PARCIALMENTE COBERTO (não verifica estoque pós-cancelamento)
 Teste: test_cancel_purchase_deletes_cart_and_restock (incompleto)
-```
-
-#### ❌ Fluxo 13: Validar 404 - Usuário não encontrado
-```
-GET /usuarios?_id={id_inexistente} → validar 404
-Motivo: Comportamento API indefinido no plano inicial
-```
-
-#### ❌ Fluxo 14: Validar 404 - Produto não encontrado
-```
-GET /produtos/{id_inexistente} → validar 404
-Motivo: Comportamento API indefinido no plano inicial
 ```
 
 #### ❌ Fluxo 15: Carrinho com Produto Sem Estoque
@@ -326,12 +328,12 @@ Motivo: Validação complexa, não priorizada no MVP
 | Tipo | Quantidade | Implementados | Percentual |
 |------|-----------|---------------|-----------|
 | **Testes Happy Path** | 20 | 20 | 100% |
-| **Testes de Validação** | 6 | 6 | 100% |
-| **Testes de Erro (4xx)** | 4 | 4 | 100% |
+| **Testes de Validação** | 8 | 8 | 100% |
+| **Testes de Erro (4xx)** | 6 | 6 | 100% |
 | **Testes de Erro (5xx)** | 2 | 0 | 0% |
 | **Testes de Autorização** | 3 | 3 | 100% |
 | **Testes de Permissão** | 2 | 2 | 100% |
-| **TOTAL** | 37 | 28 | **76%** |
+| **TOTAL** | 41 | 32 | **78%** |
 
 ---
 
@@ -343,7 +345,7 @@ Motivo: Validação complexa, não priorizada no MVP
 Total de testes: 12
 Cobertura Path: 5/5 (100%)
 Cobertura Operator: 5/5 (100%)
-Cobertura Status Code: 3/8 (37.5%)
+Cobertura Status Code: 4/8 (50%)
   ✅ 201 Created
   ✅ 400 Bad Request
   ✅ 200 OK
@@ -354,9 +356,10 @@ Cenários:
   ✅ Validar email obrigatório
   ✅ Validar email duplicado
   ✅ Buscar por ID
+  ✅ Validar 400 com ID inválido
+  ✅ Validar todos os campos retornados (nome, email, administrador)
   ✅ Atualizar usuário
   ✅ Deletar usuário
-  ⚠️ Não testa 404 (usuário não encontrado)
 ```
 
 ### 🔐 test_login.py
@@ -381,12 +384,13 @@ Cenários:
 ### 📦 test_produtos.py
 
 ```
-Total de testes: 6
+Total de testes: 9
 Cobertura Path: 5/5 (100%)
 Cobertura Operator: 5/5 (100%)
-Cobertura Status Code: 4/8 (50%)
+Cobertura Status Code: 5/8 (62.5%)
   ✅ 200 OK
   ✅ 201 Created
+  ✅ 400 Bad Request
   ✅ 401 Unauthorized
   ✅ 403 Forbidden
 
@@ -395,11 +399,11 @@ Cenários:
   ✅ Criar como admin
   ✅ Criar sem token
   ✅ Criar como não-admin (403)
+  ✅ Validar produto duplicado
   ✅ Buscar por ID
+  ✅ Validar 400 com ID inválido
   ✅ Atualizar como admin
   ✅ Deletar como admin
-  ⚠️ Não testa 404 (produto não encontrado)
-  ⚠️ Não testa produto duplicado
 ```
 
 ### 🛒 test_carrinhos.py
@@ -408,17 +412,18 @@ Cenários:
 Total de testes: 6
 Cobertura Path: 5/5 (100%)
 Cobertura Operator: 4/4 (100%)
-Cobertura Status Code: 2/8 (25%)
+Cobertura Status Code: 3/8 (37.5%)
   ✅ 200 OK
   ✅ 201 Created
+  ✅ 400 Bad Request
 
 Cenários:
   ✅ Listar carrinhos
   ✅ Criar carrinho com token válido
   ✅ Buscar carrinho por ID
+  ✅ Validar 400 com ID inválido
   ✅ Concluir compra
   ✅ Cancelar compra e reabastecer
-  ⚠️ Não testa 404 (carrinho não encontrado)
   ⚠️ Não testa produto sem estoque
   ⚠️ Não testa múltiplos produtos
 ```
