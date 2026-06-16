@@ -1,6 +1,10 @@
 import requests
+import os
+from dotenv import load_dotenv
 
-BASE_URL = "https://compassuol.serverest.dev"
+load_dotenv()
+
+BASE_URL = os.getenv("BASE_URL", "https://compassuol.serverest.dev")
 
 
 def get(path, **kwargs):
