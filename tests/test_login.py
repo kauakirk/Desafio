@@ -1,9 +1,11 @@
+import pytest
 from services.usuarios_service import UsuariosService
 from utils.payloads import new_user_payload, login_payload, empty_login_payload
 from utils.validator import validate_user_login, validate_login_response
 import uuid
 
 
+@pytest.mark.login
 def test_login_with_valid_credentials():
     user_payload = new_user_payload()
     create_response = UsuariosService.create(user_payload)
@@ -19,8 +21,12 @@ def test_login_with_valid_credentials():
     validate_login_response(body)
     assert body["message"] == "Login realizado com sucesso"
     assert "authorization" in body
+    
+    UsuariosService.delete(create_response.json()["_id"])
 
 
+@pytest.mark.login
+@pytest.mark.negativo
 def test_login_with_wrong_password():
     user_payload = new_user_payload()
     create_response = UsuariosService.create(user_payload)
@@ -31,8 +37,12 @@ def test_login_with_wrong_password():
 
     assert login_response.status_code == 401
     assert body["message"] == "Email e/ou senha inválidos"
+    
+    UsuariosService.delete(create_response.json()["_id"])
 
 
+@pytest.mark.login
+@pytest.mark.negativo
 def test_login_with_nonexistent_email():
     login_response = UsuariosService.login(login_payload(f"nao_existe_{uuid.uuid4().hex}@qa.com", "senha123"))
     body = login_response.json()
@@ -41,6 +51,8 @@ def test_login_with_nonexistent_email():
     assert body["message"] == "Email e/ou senha inválidos"
 
 
+@pytest.mark.login
+@pytest.mark.negativo
 def test_login_with_empty_fields():
     login_response = UsuariosService.login(empty_login_payload())
     body = login_response.json()
