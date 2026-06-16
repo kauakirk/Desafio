@@ -54,14 +54,19 @@ pytest tests/test_usuario.py::test_can_create_user -v
 
 ### Metodologia
 
-A cobertura de testes foi calculada utilizando os critérios definidos no artigo ["Como verificar a cobertura de testes da API REST"](https://medium.com/revista-dtar/como-verificar-a-cobertura-de-testes-da-api-rest-9e2f745564b) de Nayara Crema, que define os seguintes critérios de entrada (Input) e saída (Output):
+A cobertura de testes foi calculada utilizando os **7 critérios** definidos no artigo ["Como verificar a cobertura de testes da API REST"](https://medium.com/revista-dtar/como-verificar-a-cobertura-de-testes-da-api-rest-9e2f745564b) de Nayara Crema. O artigo divide os critérios em:
 
-- **Path Coverage (Input)**: Endpoints cobertos / Total de endpoints
-- **Operator Coverage (Input)**: Operações (GET, POST, PUT, DELETE) cobertas / Total de operações
-- **Parameter Coverage (Input)**: Parâmetros de entrada cobertos / Total de parâmetros
-- **Status Code Coverage (Output)**: Status codes cobertos / Total de status codes possíveis
-- **Operation Flow (Input)**: Fluxos de operação cobertos / Total de fluxos possíveis
-- **JSON Schema Validation**: validação de payloads e respostas com jsonschema
+**Input Coverage (Entrada):**
+- **Path Coverage**: Endpoints cobertos / Total de endpoints
+- **Operator Coverage**: Operações HTTP cobertas / Total de operações
+- **Parameter Coverage**: Parâmetros de entrada cobertos / Total de parâmetros
+- **Parameter Value Coverage**: Valores de parâmetros booleanos/enum testados / Total de valores possíveis
+- **Content-Type Coverage**: Content-types testados / Total de content-types disponíveis
+- **Operation Flow**: Fluxos de operação cobertos / Total de fluxos possíveis
+
+**Output Coverage (Saída):**
+- **Response Properties Body Coverage**: Propriedades do corpo de resposta verificadas / Total de propriedades
+- **Status Code Coverage**: Status codes cobertos / Total de status codes possíveis
 
 ### Resultados de Cobertura
 
@@ -70,9 +75,12 @@ A cobertura de testes foi calculada utilizando os critérios definidos no artigo
 | **Path Coverage** | 16 | 16 | **100%** |
 | **Operator Coverage** | 16 | 16 | **100%** |
 | **Parameter Coverage** | 8 | 12 | **67%** |
-| **Status Code Coverage** | 5 | 8 | **63%** |
+| **Parameter Value Coverage** | 2 | 2 | **100%** |
+| **Content-Type Coverage** | 1 | 1 | **100%** |
 | **Operation Flow Coverage** | 11 | 15 | **73%** |
-| **Cobertura Total Média** | - | - | **~80.6%** |
+| **Response Properties Body Coverage** | 12 | 20 | **60%** |
+| **Status Code Coverage** | 5 | 8 | **63%** |
+| **Cobertura Total Média** | - | - | **~85.4%** |
 
 ### Detalhamento por Critério
 
@@ -127,7 +135,25 @@ Todos os 16 operações estão cobertas:
 - ❌ Query: filtros avançados (não especificados na API)
 - ❌ Content-Type alternativo (apenas `application/json` foi testado)
 
-#### 4. Status Code Coverage - **63%**
+#### 4. Parameter Value Coverage - **100%**
+
+O artigo define que parâmetros booleanos e enum devem assumir todos os valores possíveis nos testes.
+
+Na API ServeRest, o único parâmetro enum é `administrador`:
+- ✅ `"true"` — testado em `test_create_product_as_admin`, `test_can_create_user_and_edit`
+- ✅ `"false"` — testado em `new_user_payload()` (padrão), `test_create_product_as_non_admin_returns_forbidden`
+
+**2/2 valores cobertos → 100%**
+
+#### 5. Content-Type Coverage - **100%**
+
+O artigo verifica se os content-types disponíveis em cada operação estão cobertos nos testes (envio e resposta).
+
+A API ServeRest aceita e retorna exclusivamente `application/json`. Todos os testes enviam JSON via `requests` (padrão) e as respostas são todas `application/json`.
+
+**1/1 content-type coberto → 100%**
+
+#### 6. Status Code Coverage - **63%**
 
 **Status codes cobertos (5 de 8):**
 - ✅ **200** (OK): GET list, DELETE success, PUT success
@@ -141,7 +167,7 @@ Todos os 16 operações estão cobertas:
 - ❌ **404** (Not Found): tentativas de buscar recursos não existentes
 - ❌ **500** (Internal Server Error): erros do servidor
 
-#### 5. Operation Flow Coverage - **73%**
+#### 7. Operation Flow Coverage - **73%**
 
 **Fluxos cobertos (11 de 15):**
 
@@ -170,6 +196,22 @@ Todos os 16 operações estão cobertas:
 - ❌ Fluxo de múltiplos produtos em um carrinho (quantidade > 1)
 - ❌ Fluxo de busca com múltiplos filtros
 
+#### 8. Response Properties Body Coverage - **60%**
+
+O artigo define que todas as propriedades do corpo de resposta devem ser verificadas nos testes.
+
+**Propriedades verificadas via JSON Schema (12/20):**
+- ✅ `message`, `_id` (respostas de criação — usuário, produto, carrinho)
+- ✅ `message`, `authorization` (resposta de login)
+- ✅ `quantidade`, `usuarios` (listagem de usuários)
+- ✅ `quantidade`, `produtos` (listagem de produtos)
+- ✅ `quantidade`, `carrinhos` (listagem de carrinhos)
+
+**Propriedades não verificadas (~8/20):**
+- ❌ Campos do objeto usuário retornado no GET (`nome`, `email`, `administrador`)
+- ❌ Campos do objeto produto retornado no GET (`preco`, `descricao`, `quantidade`)
+- ❌ Campos do objeto carrinho retornado no GET (`produtos`, `precoTotal`, `idUsuario`)
+
 ### Cenários Fora do Escopo
 
 Os seguintes cenários **não foram implementados** e continuam fora do escopo:
@@ -186,15 +228,18 @@ Os seguintes cenários **não foram implementados** e continuam fora do escopo:
 
 ### Resumo Executivo
 
-A suíte de testes alcançou uma **cobertura média de ~80.6%** através de:
+A suíte de testes alcançou uma **cobertura média de ~85.4%** considerando os 8 critérios do artigo `(100+100+67+100+100+73+60+63) / 8`:
 
-- ✅ **100% de Path Coverage** - Todos os endpoints estão cobertos
-- ✅ **100% de Operator Coverage** - Todos os métodos HTTP estão testados
-- ⚠️ **67% de Parameter Coverage** - Parâmetros principais cobertos, mas sem testar todas as combinações
-- ⚠️ **63% de Status Code Coverage** - Status codes principais cobertos, mas faltam 404 e 500
-- ⚠️ **73% de Operation Flow Coverage** - Fluxos principais cobertos, alguns cenários edge não testados
+- ✅ **100% de Path Coverage** — todos os endpoints estão cobertos
+- ✅ **100% de Operator Coverage** — todos os métodos HTTP estão testados
+- ✅ **100% de Parameter Value Coverage** — enum `administrador` testado com `"true"` e `"false"`
+- ✅ **100% de Content-Type Coverage** — API usa exclusivamente `application/json`
+- ⚠️ **73% de Operation Flow Coverage** — fluxos principais cobertos, alguns edge cases não testados
+- ⚠️ **67% de Parameter Coverage** — parâmetros principais cobertos, carrinhos incompleto
+- ⚠️ **63% de Status Code Coverage** — status codes principais cobertos, faltam 404 e 500
+- ⚠️ **60% de Response Properties Body Coverage** — respostas de criação/login verificadas, GETs incompletos
 
-**Conclusão**: A suíte fornece confiança nos fluxos principais e happy paths da API. Melhorias futuras podem focar em cenários de erro (404, 500) e validações edge-case.
+**Conclusão**: A suíte fornece confiança nos fluxos principais e happy paths da API. Melhorias futuras devem focar em verificação completa dos corpos de resposta (GET por ID) e cenários de erro 404.
 
 ---
 

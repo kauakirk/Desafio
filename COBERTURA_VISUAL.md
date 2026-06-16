@@ -17,6 +17,18 @@ DELETE:  [████████████] 4/4
 TOTAL:   [████████████] 16/16
 ```
 
+### Parameter Value Coverage: 100% ✅
+```
+administrador "true":  [████████████] 1/1  ✅
+administrador "false": [████████████] 1/1  ✅
+TOTAL:                 [████████████] 2/2
+```
+
+### Content-Type Coverage: 100% ✅
+```
+application/json:  [████████████] 1/1  ✅
+```
+
 ### Status Code Coverage: 63%
 ```
 200:  [████████████] 1/1  ✅
@@ -41,6 +53,12 @@ Não Cobertos: [░░░░░░░░░░░░░░░░░░░░] 4/
 ```
 Cobertos:     [██████████░░░░░░░░░░] 11/15
 Não Cobertos: [░░░░░░░░░░░░░░░░░░░░] 4/15
+```
+
+### Response Properties Body Coverage: 60%
+```
+Verificadas:     [████████████░░░░░░░░] 12/20
+Não Verificadas: [░░░░░░░░░░░░░░░░░░░░] 8/20
 ```
 
 ---
@@ -98,14 +116,14 @@ TOTAL MÓDULO:        [██████████░░░░░░░░░
 ```
 ╔════════════════════════════════════════════════╗
 ║                                                ║
-║  COBERTURA GERAL: 80.6%                        ║
+║  COBERTURA GERAL: 85.4%                        ║
 ║                                                ║
 ║  ████████████████░░░░░░░░░░░░░░░░░░░░░░░░░  ║
 ║                                                ║
 ║  • 28/28 testes passando ✅                    ║
 ║  • 16/16 endpoints cobertos                   ║
 ║  • 16/16 operações cobertas                   ║
-║  • ~5000 linhas de código testado             ║
+║  • 8/8 critérios do artigo calculados         ║
 ║                                                ║
 ╚════════════════════════════════════════════════╝
 ```

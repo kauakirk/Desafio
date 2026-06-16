@@ -11,13 +11,16 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ COBERTURA GERAL: 80.6%                                          │
+│ COBERTURA GERAL: 85.4%                                          │
 ├─────────────────────────────────────────────────────────────────┤
-│ Path Coverage:           ████████████████████ 100% (16/16)      │
-│ Operator Coverage:       ████████████████████ 100% (16/16)      │
-│ Operation Flow:          ███████████████░░░░░  73% (11/15)      │
-│ Parameter Coverage:      ██████████░░░░░░░░░░  67% (8/12)       │
-│ Status Code Coverage:    ████████░░░░░░░░░░░░  63% (5/8)        │
+│ Path Coverage:                ████████████████████ 100% (16/16) │
+│ Operator Coverage:            ████████████████████ 100% (16/16) │
+│ Parameter Value Coverage:     ████████████████████ 100%  (2/2)  │
+│ Content-Type Coverage:        ████████████████████ 100%  (1/1)  │
+│ Operation Flow:               ███████████████░░░░░  73% (11/15) │
+│ Parameter Coverage:           █████████████░░░░░░░  67%  (8/12) │
+│ Status Code Coverage:         ████████████░░░░░░░░  63%  (5/8)  │
+│ Response Properties Coverage: ████████████░░░░░░░░  60% (12/20) │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -75,7 +78,56 @@
 
 ---
 
-## 📝 Parameter Coverage - 67%
+## 🔢 Parameter Value Coverage - 100%
+
+O artigo define que parâmetros booleanos e enum devem assumir todos os valores possíveis nos testes.
+
+Na API ServeRest, o único parâmetro enum é `administrador` em `POST /usuarios` e `PUT /usuarios/{id}`:
+
+| Valor | Coberto | Teste |
+|-------|---------|-------|
+| `"true"` | ✅ | `test_create_product_as_admin`, `test_can_create_user_and_edit` |
+| `"false"` | ✅ | `new_user_payload()` (padrão), `test_create_product_as_non_admin_returns_forbidden` |
+
+**2/2 valores cobertos → 100%**
+
+---
+
+## 📄 Content-Type Coverage - 100%
+
+O artigo verifica se os content-types disponíveis em cada operação estão cobertos nos testes (envio e resposta).
+
+A API ServeRest aceita e retorna exclusivamente `application/json`. Todos os testes usam `requests` que envia JSON por padrão via `json=payload`.
+
+**1/1 content-type coberto → 100%**
+
+---
+
+## 📦 Response Properties Body Coverage - 60%
+
+O artigo define que todas as propriedades do corpo de resposta devem ser verificadas.
+
+### Propriedades verificadas via JSON Schema (12/20)
+
+| Endpoint | Propriedades verificadas |
+|----------|-------------------------|
+| POST /usuarios | `message`, `_id` |
+| POST /login | `message`, `authorization` |
+| POST /produtos | `message`, `_id` |
+| POST /carrinhos | `message`, `_id` |
+| GET /usuarios | `quantidade`, `usuarios` (lista) |
+| GET /produtos | `quantidade`, `produtos` (lista) |
+| GET /carrinhos | `quantidade`, `carrinhos` (lista) |
+
+### Propriedades não verificadas (~8/20)
+
+| Endpoint | Propriedades não verificadas |
+|----------|------------------------------|
+| GET /usuarios/{id} | `nome`, `email`, `administrador` do objeto retornado |
+| GET /produtos/{id} | `preco`, `descricao`, `quantidade` do objeto retornado |
+| GET /carrinhos/{id} | `produtos`, `precoTotal`, `idUsuario` do objeto retornado |
+
+---
 
 ### Parâmetros Cobertos (8/12)
 
@@ -447,8 +499,8 @@ Coverage = 11 / 15 = 73%
 
 ### Cobertura Total Média
 ```
-Total = (Path + Operator + Parameter + StatusCode + Flow) / 5
-Total = (100 + 100 + 67 + 63 + 73) / 5 = 80.6%
+Total = (Path + Operator + ParamValue + ContentType + Flow + Parameter + StatusCode + ResponseProps) / 8
+Total = (100 + 100 + 100 + 100 + 73 + 67 + 63 + 60) / 8 = 85.4%
 ```
 
 ---
