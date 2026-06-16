@@ -20,7 +20,7 @@ class UsuariosService:
     @staticmethod
     def get_by_id(user_id):
         """Buscar usuário por ID."""
-        return get("/usuarios", params={"_id": user_id})
+        return get(f"/usuarios/{user_id}")
 
     @staticmethod
     def update(user_id, payload):
